@@ -37,3 +37,39 @@ Demo table MonHoc
 Demo table LopHoc
 ![image](https://github.com/user-attachments/assets/b30c88dc-7395-41ea-8ccb-5aee690e5c6c)
 
+## Query truy vẫn thông tin:
+![image](https://github.com/user-attachments/assets/ffb7cc19-2630-4601-a049-ee79f44af189)
+
+~~~
+USE bt4
+GO
+DECLARE @datetime1 DATETIME = '2025-04-16 06:30:00';
+DECLARE @datetime2  DATETIME = '2025-04-16 09:10:00';
+SELECT
+    gv.HoTenGV AS "Họ Tên GV",
+    mh.TenMH AS "Môn Dạy",
+    tkb.GioBatDau AS "Giờ Vào Lớp",
+    tkb.GioKetThuc AS "Giờ Ra"
+FROM
+    ThoiKhoaBieu tkb
+JOIN
+    GiangVien gv ON tkb.MaGV = gv.MaGV
+JOIN
+    MonHoc mh ON tkb.MaMH = mh.MaMH;
+
+SELECT DISTINCT
+    gv.HoTenGV AS "Giảng Viên Bận"
+FROM
+    ThoiKhoaBieu tkb
+JOIN
+    GiangVien gv ON tkb.MaGV = gv.MaGV
+WHERE
+    tkb.NgayHoc >= CAST(@datetime1 AS DATE) AND tkb.NgayHoc <= CAST(@datetime2 AS DATE)
+    AND (
+        (CAST(@datetime1 AS TIME) BETWEEN tkb.GioBatDau AND tkb.GioKetThuc) OR
+        (CAST(@datetime2 AS TIME) BETWEEN tkb.GioBatDau AND tkb.GioKetThuc) OR
+        (tkb.GioBatDau BETWEEN CAST(@datetime1 AS TIME) AND CAST(@datetime2 AS TIME)) OR
+        (tkb.GioKetThuc BETWEEN CAST(@datetime1 AS TIME) AND CAST(@datetime2 AS TIME))
+    );
+~~~
+
